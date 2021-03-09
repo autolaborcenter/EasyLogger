@@ -1,3 +1,5 @@
+
+
 /*
  * This file is part of the EasyLogger Library.
  *
@@ -28,6 +30,16 @@
  
 #include <elog.h>
 
+//for stm32f107
+#include "usart.h"
+//for FreeRTOS
+#include "cmsis_os2.h"
+osMutexId_t ElogOutputMutexHandle;
+const osMutexAttr_t ElogOutputMutex_attributes = {
+  .name = "ElogOutputMutex"
+};
+
+
 /**
  * EasyLogger port initialize
  *
@@ -37,7 +49,10 @@ ElogErrCode elog_port_init(void) {
     ElogErrCode result = ELOG_NO_ERR;
 
     /* add your code here */
-    
+    //create easylogger output mutex
+    ElogOutputMutexHandle = osMutexNew(&ElogOutputMutex_attributes);
+
+
     return result;
 }
 
@@ -50,7 +65,7 @@ ElogErrCode elog_port_init(void) {
 void elog_port_output(const char *log, size_t size) {
     
     /* add your code here */
-    
+	HAL_UART_Transmit(&huart1,(uint8_t *)&log,size,10);
 }
 
 /**
@@ -59,7 +74,7 @@ void elog_port_output(const char *log, size_t size) {
 void elog_port_output_lock(void) {
     
     /* add your code here */
-    
+	osMutexAcquire(ElogOutputMutexHandle,100);
 }
 
 /**
@@ -68,7 +83,7 @@ void elog_port_output_lock(void) {
 void elog_port_output_unlock(void) {
     
     /* add your code here */
-    
+	osMutexRelease(ElogOutputMutexHandle);
 }
 
 /**
@@ -77,9 +92,12 @@ void elog_port_output_unlock(void) {
  * @return current time
  */
 const char *elog_port_get_time(void) {
-    
+
     /* add your code here */
-    
+    // static char cur_system_time[12] = { 0 };
+	// snprintf(cur_system_time,12,"% 11.3f",osKernelGetTickCount()/1000.0);
+    // return cur_system_time;
+    return " ";
 }
 
 /**
@@ -90,7 +108,7 @@ const char *elog_port_get_time(void) {
 const char *elog_port_get_p_info(void) {
     
     /* add your code here */
-    
+    return " ";
 }
 
 /**
@@ -101,5 +119,5 @@ const char *elog_port_get_p_info(void) {
 const char *elog_port_get_t_info(void) {
     
     /* add your code here */
-    
+    return " ";
 }
