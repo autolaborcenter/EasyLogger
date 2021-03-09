@@ -34,11 +34,13 @@
 #include "usart.h"
 //for FreeRTOS
 #include "cmsis_os2.h"
-osMutexId_t ElogOutputMutexHandle;
+
 const osMutexAttr_t ElogOutputMutex_attributes = {
   .name = "ElogOutputMutex"
 };
 
+char cur_proc_name[12]={0};
+char cur_th_name[12]={0};
 
 /**
  * EasyLogger port initialize
@@ -65,7 +67,9 @@ ElogErrCode elog_port_init(void) {
 void elog_port_output(const char *log, size_t size) {
     
     /* add your code here */
-	HAL_UART_Transmit(&huart1,(uint8_t *)&log,size,10);
+	HAL_UART_Transmit(&huart1,(uint8_t*)log,size,0xffff);
+
+//	printf("%.*s", size, log);
 }
 
 /**
@@ -74,7 +78,7 @@ void elog_port_output(const char *log, size_t size) {
 void elog_port_output_lock(void) {
     
     /* add your code here */
-	osMutexAcquire(ElogOutputMutexHandle,100);
+	osMutexAcquire(ElogOutputMutexHandle,0xffff);
 }
 
 /**
@@ -94,10 +98,13 @@ void elog_port_output_unlock(void) {
 const char *elog_port_get_time(void) {
 
     /* add your code here */
-    // static char cur_system_time[12] = { 0 };
-	// snprintf(cur_system_time,12,"% 11.3f",osKernelGetTickCount()/1000.0);
-    // return cur_system_time;
-    return " ";
+
+
+	static char cur_sys_time[12]={0};
+//	snprintf(cur_sys_time,12,"% 12.3f",osKernelGetTickCount()/1000.0);
+	 snprintf(cur_sys_time,12,"% 10u",osKernelGetTickCount());
+     return cur_sys_time;
+//    return " ";
 }
 
 /**
@@ -108,7 +115,12 @@ const char *elog_port_get_time(void) {
 const char *elog_port_get_p_info(void) {
     
     /* add your code here */
-    return " ";
+
+//	osThreadId_t osThreadGetId (void);
+//    static char thread_id[10] = { 0 };
+//	 snprintf(thread_id,10,"%u",(uint32_t)osThreadGetId());
+//	return thread_id;
+    return "";
 }
 
 /**
@@ -119,5 +131,6 @@ const char *elog_port_get_p_info(void) {
 const char *elog_port_get_t_info(void) {
     
     /* add your code here */
-    return " ";
+
+	return osThreadGetName (osThreadGetId());
 }
