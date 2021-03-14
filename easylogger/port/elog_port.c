@@ -28,6 +28,10 @@
  
 #include <elog.h>
 
+#include "usart.h"
+
+static bool output_mutex =false; //for no-os application's logging
+
 /**
  * EasyLogger port initialize
  *
@@ -50,7 +54,8 @@ ElogErrCode elog_port_init(void) {
 void elog_port_output(const char *log, size_t size) {
     
     /* add your code here */
-    
+
+	HAL_UART_Transmit(&huart1,(uint8_t *)&log,size,10);
 }
 
 /**
@@ -59,7 +64,12 @@ void elog_port_output(const char *log, size_t size) {
 void elog_port_output_lock(void) {
     
     /* add your code here */
-    
+	if(output_mutex){
+		unsigned char time_out = 20;
+		while(mutex && time_out--){//100ms timout for multi-thread use log function
+			HAL_Delay(1);
+		}
+	}
 }
 
 /**
@@ -68,7 +78,7 @@ void elog_port_output_lock(void) {
 void elog_port_output_unlock(void) {
     
     /* add your code here */
-    
+	output_mutex = false;
 }
 
 /**
@@ -79,7 +89,7 @@ void elog_port_output_unlock(void) {
 const char *elog_port_get_time(void) {
     
     /* add your code here */
-    
+    return " ";
 }
 
 /**
@@ -90,6 +100,7 @@ const char *elog_port_get_time(void) {
 const char *elog_port_get_p_info(void) {
     
     /* add your code here */
+    return " ";
     
 }
 
@@ -101,5 +112,6 @@ const char *elog_port_get_p_info(void) {
 const char *elog_port_get_t_info(void) {
     
     /* add your code here */
+    return " ";
     
 }
