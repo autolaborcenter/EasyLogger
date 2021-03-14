@@ -40,8 +40,7 @@ extern "C" {
 
 //for freertos
 #include "cmsis_os2.h"
-osMutexId_t ElogOutputMutexHandle;
-const osMutexAttr_t ElogOutputMutex_attributes;
+
 
 /* output log's level */
 #define ELOG_LVL_ASSERT                      0

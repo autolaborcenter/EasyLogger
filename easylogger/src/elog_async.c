@@ -38,8 +38,8 @@
 //#include <semaphore.h>
 
 ////for FreeRTOS
-//#include "cmsis_os2.h"
-//#define sem_t osSemaphoreId_t
+#include "cmsis_os2.h"
+#define sem_t osSemaphoreId_t
 
 /* thread default stack size */
 #ifndef ELOG_ASYNC_OUTPUT_PTHREAD_STACK_SIZE

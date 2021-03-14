@@ -34,10 +34,8 @@
 #include "usart.h"
 //for FreeRTOS
 #include "cmsis_os2.h"
+#include "th_elog.h"
 
-const osMutexAttr_t ElogOutputMutex_attributes = {
-  .name = "ElogOutputMutex"
-};
 
 char cur_proc_name[12]={0};
 char cur_th_name[12]={0};
@@ -51,10 +49,6 @@ ElogErrCode elog_port_init(void) {
     ElogErrCode result = ELOG_NO_ERR;
 
     /* add your code here */
-    //create easylogger output mutex
-    ElogOutputMutexHandle = osMutexNew(&ElogOutputMutex_attributes);
-
-
     return result;
 }
 
@@ -67,7 +61,10 @@ ElogErrCode elog_port_init(void) {
 void elog_port_output(const char *log, size_t size) {
     
     /* add your code here */
-	HAL_UART_Transmit(&huart1,(uint8_t*)log,size,0xffff);
+
+	//	HAL_UART_Transmit(&huart1,(uint8_t*)log,size,100);
+	HAL_UART_Transmit_DMA(&huart1, (uint8_t*)log, size);
+//	HAL_UART_Transmit_IT(&huart1, (uint8_t*)log, size);
 
 //	printf("%.*s", size, log);
 }
@@ -78,7 +75,8 @@ void elog_port_output(const char *log, size_t size) {
 void elog_port_output_lock(void) {
     
     /* add your code here */
-	osMutexAcquire(ElogOutputMutexHandle,0xffff);
+//	 osMutexAcquire(ElogOutputMutexHandle,1000);
+    osSemaphoreAcquire(ElogOutputBinarySemHandle,0);
 }
 
 /**
@@ -87,7 +85,8 @@ void elog_port_output_lock(void) {
 void elog_port_output_unlock(void) {
     
     /* add your code here */
-	osMutexRelease(ElogOutputMutexHandle);
+	// osMutexRelease(ElogOutputMutexHandle);
+    osSemaphoreRelease(ElogOutputBinarySemHandle);
 }
 
 /**
@@ -98,10 +97,8 @@ void elog_port_output_unlock(void) {
 const char *elog_port_get_time(void) {
 
     /* add your code here */
-
-
 	static char cur_sys_time[12]={0};
-//	snprintf(cur_sys_time,12,"% 12.3f",osKernelGetTickCount()/1000.0);
+	// snprintf(cur_sys_time,12,"% 11.3f",osKernelGetTickCount()/1000.0);
 	 snprintf(cur_sys_time,12,"% 10u",osKernelGetTickCount());
      return cur_sys_time;
 //    return " ";
@@ -115,12 +112,9 @@ const char *elog_port_get_time(void) {
 const char *elog_port_get_p_info(void) {
     
     /* add your code here */
-
-//	osThreadId_t osThreadGetId (void);
-//    static char thread_id[10] = { 0 };
-//	 snprintf(thread_id,10,"%u",(uint32_t)osThreadGetId());
-//	return thread_id;
-    return "";
+    static char thread_pri[10] = { 0 };
+	 snprintf(thread_pri,10,"(%u)",(uint32_t)osThreadGetPriority(osThreadGetId()));
+    return thread_pri;
 }
 
 /**
