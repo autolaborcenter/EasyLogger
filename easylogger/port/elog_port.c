@@ -63,6 +63,8 @@ void elog_port_output(const char *log, size_t size) {
     /* add your code here */
 
 	//	HAL_UART_Transmit(&huart1,(uint8_t*)log,size,100);
+
+	osSemaphoreAcquire(ElogUartBinarySemHandle,5);
 	HAL_UART_Transmit_DMA(&huart1, (uint8_t*)log, size);
 //	HAL_UART_Transmit_IT(&huart1, (uint8_t*)log, size);
 
@@ -75,8 +77,9 @@ void elog_port_output(const char *log, size_t size) {
 void elog_port_output_lock(void) {
     
     /* add your code here */
-//	 osMutexAcquire(ElogOutputMutexHandle,1000);
-    osSemaphoreAcquire(ElogOutputBinarySemHandle,0);
+//	 osMutexAcquire(ElogOutputMutexHandle,0);
+//	if(!IS_IRQ())
+		osSemaphoreAcquire(ElogOutputBinarySemHandle,10);
 }
 
 /**
@@ -85,8 +88,9 @@ void elog_port_output_lock(void) {
 void elog_port_output_unlock(void) {
     
     /* add your code here */
-	// osMutexRelease(ElogOutputMutexHandle);
-    osSemaphoreRelease(ElogOutputBinarySemHandle);
+//	 osMutexRelease(ElogOutputMutexHandle);
+//	if(!IS_IRQ())
+		osSemaphoreRelease(ElogOutputBinarySemHandle);
 }
 
 /**
