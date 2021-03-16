@@ -38,7 +38,7 @@
 /* buffer size for every line's log */
 #define ELOG_LINE_BUF_SIZE                       256
 /* output line number max length */
-#define ELOG_LINE_NUM_MAX_LEN                    10
+#define ELOG_LINE_NUM_MAX_LEN                    16
 /* output filter's tag max length */
 #define ELOG_FILTER_TAG_MAX_LEN                  16
 /* output filter's keyword max length */

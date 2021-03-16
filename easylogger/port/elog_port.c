@@ -35,10 +35,10 @@
 //for FreeRTOS
 #include "cmsis_os2.h"
 #include "th_elog.h"
+//#include "navikit.h"
+#include "string.h"
 
 
-char cur_proc_name[12]={0};
-char cur_th_name[12]={0};
 
 /**
  * EasyLogger port initialize
@@ -62,13 +62,10 @@ void elog_port_output(const char *log, size_t size) {
     
     /* add your code here */
 
-	//	HAL_UART_Transmit(&huart1,(uint8_t*)log,size,100);
-
-	osSemaphoreAcquire(ElogUartBinarySemHandle,5);
-	HAL_UART_Transmit_DMA(&huart1, (uint8_t*)log, size);
+	HAL_UART_Transmit(&huart1,(uint8_t*)log,size,0xffff);
+//	HAL_UART_Transmit_DMA(&huart1, (uint8_t*)log, size);
 //	HAL_UART_Transmit_IT(&huart1, (uint8_t*)log, size);
 
-//	printf("%.*s", size, log);
 }
 
 /**
@@ -77,9 +74,7 @@ void elog_port_output(const char *log, size_t size) {
 void elog_port_output_lock(void) {
     
     /* add your code here */
-//	 osMutexAcquire(ElogOutputMutexHandle,0);
-//	if(!IS_IRQ())
-		osSemaphoreAcquire(ElogOutputBinarySemHandle,10);
+	osSemaphoreAcquire(ElogOutputBinarySemHandle,100);
 }
 
 /**
@@ -88,9 +83,7 @@ void elog_port_output_lock(void) {
 void elog_port_output_unlock(void) {
     
     /* add your code here */
-//	 osMutexRelease(ElogOutputMutexHandle);
-//	if(!IS_IRQ())
-		osSemaphoreRelease(ElogOutputBinarySemHandle);
+	osSemaphoreRelease(ElogOutputBinarySemHandle);
 }
 
 /**
@@ -102,8 +95,11 @@ const char *elog_port_get_time(void) {
 
     /* add your code here */
 	static char cur_sys_time[12]={0};
-	// snprintf(cur_sys_time,12,"% 11.3f",osKernelGetTickCount()/1000.0);
+//	 snprintf(cur_sys_time,12,"% 11.3f",osKernelGetTickCount()/1000.0);
 	 snprintf(cur_sys_time,12,"% 10u",osKernelGetTickCount());
+	 //add dot to string(unit from 'MS' to 'S')
+	 memmove(&cur_sys_time[8],&cur_sys_time[7],4);
+	 cur_sys_time[7] = '.';
      return cur_sys_time;
 //    return " ";
 }
