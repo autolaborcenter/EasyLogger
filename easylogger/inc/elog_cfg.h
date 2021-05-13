@@ -36,20 +36,20 @@
 /* enable assert check */
 #define ELOG_ASSERT_ENABLE
 /* buffer size for every line's log */
-#define ELOG_LINE_BUF_SIZE                       1024
+#define ELOG_LINE_BUF_SIZE                       128
 /* output line number max length */
 #define ELOG_LINE_NUM_MAX_LEN                    5
 /* output filter's tag max length */
-#define ELOG_FILTER_TAG_MAX_LEN                  30
+#define ELOG_FILTER_TAG_MAX_LEN                  16
 /* output filter's keyword max length */
 #define ELOG_FILTER_KW_MAX_LEN                   16
 /* output filter's tag level max num */
 #define ELOG_FILTER_TAG_LVL_MAX_NUM              5
 /* output newline sign */
-#define ELOG_NEWLINE_SIGN                        "\n"
+#define ELOG_NEWLINE_SIGN                        "\r\n"
 /*---------------------------------------------------------------------------*/
 /* enable log color */
-#define ELOG_COLOR_ENABLE
+//#define ELOG_COLOR_ENABLE
 /* change the some level logs to not default color if you want */
 #define ELOG_COLOR_ASSERT                        (F_MAGENTA B_NULL S_NORMAL)
 #define ELOG_COLOR_ERROR                         (F_RED B_NULL S_NORMAL)
@@ -63,15 +63,15 @@
 /* the highest output level for async mode, other level will sync output */
 #define ELOG_ASYNC_OUTPUT_LVL                    ELOG_LVL_ASSERT
 /* buffer size for asynchronous output mode */
-#define ELOG_ASYNC_OUTPUT_BUF_SIZE               (ELOG_LINE_BUF_SIZE * 10)
+#define ELOG_ASYNC_OUTPUT_BUF_SIZE               (ELOG_LINE_BUF_SIZE * 16)
 /* each asynchronous output's log which must end with newline sign */
 #define ELOG_ASYNC_LINE_OUTPUT
 /* asynchronous output mode using POSIX pthread implementation */
 #define ELOG_ASYNC_OUTPUT_USING_PTHREAD
 /*---------------------------------------------------------------------------*/
 /* enable buffered output mode */
-#define ELOG_BUF_OUTPUT_ENABLE
+//#define ELOG_BUF_OUTPUT_ENABLE
 /* buffer size for buffered output mode */
-#define ELOG_BUF_OUTPUT_BUF_SIZE                 (ELOG_LINE_BUF_SIZE * 10)
+#define ELOG_BUF_OUTPUT_BUF_SIZE                 (ELOG_LINE_BUF_SIZE * 5)
 
 #endif /* _ELOG_CFG_H_ */

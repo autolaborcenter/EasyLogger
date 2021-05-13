@@ -55,7 +55,7 @@ void elog_port_output(const char *log, size_t size) {
     
     /* add your code here */
 
-	HAL_UART_Transmit(&huart1,(uint8_t *)&log,size,10);
+	HAL_UART_Transmit(&huart1,(uint8_t*)log,size,0xffff);
 }
 
 /**
@@ -66,8 +66,11 @@ void elog_port_output_lock(void) {
     /* add your code here */
 	if(output_mutex){
 		unsigned char time_out = 20;
-		while(mutex && time_out--){//100ms timout for multi-thread use log function
+		while(output_mutex && time_out--){//100ms timout for multi-thread use log function
 			HAL_Delay(1);
+		}
+		if(!output_mutex){
+			output_mutex = true;	//lock
 		}
 	}
 }
@@ -89,7 +92,7 @@ void elog_port_output_unlock(void) {
 const char *elog_port_get_time(void) {
     
     /* add your code here */
-    return " ";
+    return "";
 }
 
 /**
@@ -100,7 +103,7 @@ const char *elog_port_get_time(void) {
 const char *elog_port_get_p_info(void) {
     
     /* add your code here */
-    return " ";
+    return "";
     
 }
 
@@ -112,6 +115,6 @@ const char *elog_port_get_p_info(void) {
 const char *elog_port_get_t_info(void) {
     
     /* add your code here */
-    return " ";
+    return "";
     
 }
