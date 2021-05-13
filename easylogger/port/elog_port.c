@@ -29,6 +29,7 @@
 #include <elog.h>
 
 #include "usart.h"
+#include "string.h"
 
 static bool output_mutex =false; //for no-os application's logging
 
@@ -92,7 +93,14 @@ void elog_port_output_unlock(void) {
 const char *elog_port_get_time(void) {
     
     /* add your code here */
-    return "";
+
+	static char cur_sys_time[12]={0};
+	 snprintf(cur_sys_time,12,"% 10u",HAL_GetTick());
+	 //add dot to string(unit from 'MS' to 'S')
+	 memmove(&cur_sys_time[8],&cur_sys_time[7],4);
+	 cur_sys_time[7] = '.';
+     return cur_sys_time;
+
 }
 
 /**
